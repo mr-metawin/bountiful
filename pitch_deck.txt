@@ -1,0 +1,247 @@
+================================================================================
+                               BOUNTIFUL
+                  "Post a task. Pay the best answer."
+     Decentralized, Guaranteed-Payout Bounty Board on BOT Blockchain
+================================================================================
+
+PROJECT:           Bountiful
+TAGLINE:           "Post a task. Pay the best answer."
+NETWORK:           BOT Testnet (Chain ID: 968)
+RPC ENDPOINT:      https://rpc.bohr.life
+EXPLORER:          https://scan.bohr.life
+CONTRACT ADDRESS:  0x9D67fFa376b94b44804b75d0006D37e6C8a5Cab2
+VERIFICATION:      Verified on BohrScan (Blockscout API)
+TECH STACK:        Solidity 0.8.24, OpenZeppelin 5.0.2, Foundry, Vite, React 18, 
+                   TypeScript, viem 2.x
+
+================================================================================
+SLIDE 1: COVER & VISION
+================================================================================
+
+BOUNTIFUL
+"Post a task. Pay the best answer."
+
+Bountiful reimagines freelance work and open-source bounties as a trustless,
+decentralized micro-task economy powered natively by the BOT Blockchain.
+
+- Pure Onchain Storage: Deliverables, text answers, and links stored directly in 
+  contract state. No IPFS dependencies, no offchain backends, no file servers.
+- Guaranteed Worker Payouts: Posters lock 100% of the reward upfront. If a poster 
+  disappears, the smart contract automatically splits the reward equally among 
+  all workers. Work is never left unpaid.
+- Zero Platform Take-Rate: 100% of deposited BOT flows directly from poster to 
+  worker with 0% platform fee.
+
+================================================================================
+SLIDE 2: EXECUTIVE SUMMARY
+================================================================================
+
+Bountiful solves the fundamental trust asymmetry between bounty posters and 
+freelance contributors through rigorous smart contract game theory.
+
+KEY HIGHLIGHTS:
+1. Poster Commitment:
+   - Posters lock native BOT upon task creation.
+   - Posters can only cancel their bounty while submission count is exactly ZERO.
+   - Once work is submitted, the reward cannot be retracted.
+
+2. Anti-Abandonment Split Guarantee:
+   - Tasks feature a defined submission deadline and review deadline.
+   - If the poster fails to select a winner before the review deadline, anyone 
+     can call `splitIfAbandoned(bountyId)` to divide the locked reward equally 
+     among all submitters.
+
+3. Pull-Based Balance Withdrawals:
+   - All balance updates credit `pendingBalance[recipient]`.
+   - Native funds leave the contract exclusively via `withdraw()`.
+   - Reverting or malicious worker contracts cannot DOS the poster or other workers.
+
+4. Verified & Tested:
+   - 42 comprehensive Foundry tests (unit, fuzz, reentrancy, and 128,000-call 
+     stateful invariant testing).
+   - Deployed and verified on BOT Testnet (Chain ID 968).
+
+================================================================================
+SLIDE 3: THE PROBLEM IN WEB3 BOUNTIES & FREELANCING
+================================================================================
+
+Traditional platforms (Upwork, Fiverr) and legacy Web3 bounty boards fail both 
+creators and workers:
+
+1. Poster Abandonment & Ghosting:
+   - Workers spend hours building graphics, writing articles, or solving bugs, 
+     only for the bounty poster to vanish without awarding anyone.
+   - In existing platforms, funds remain trapped in limbo or are refunded back 
+     to the negligent poster, leaving contributors exploited.
+
+2. High Intermediary Fees:
+   - Web2 platforms extract 10%–20% in transaction commissions.
+   - Crypto bounty platforms frequently levy 3%–5% protocol rake.
+
+3. Fragile Offchain Dependencies:
+   - Reliance on centralized servers or IPFS gateways creates 404 errors, 
+     censorship risks, and broken submissions over time.
+
+4. Smart Contract Vulnerabilities:
+   - Push-based ETH transfers can be DOS'd by malicious fallback contracts.
+   - Lack of invariant bounds allows reward theft or accounting imbalances.
+
+================================================================================
+SLIDE 4: THE BOUNTIFUL SOLUTION
+================================================================================
+
+Bountiful replaces human middlemen and opaque escrow with immutable onchain code:
+
+1. Non-Cancellable Once Work Begins:
+   - Poster can only cancel while `submissionCount == 0`.
+   - The moment the first contributor submits, the contract seals the reward.
+
+2. Automated Sunset Splitting:
+   - If the review deadline passes without poster action, permissionless split 
+     triggers automatically. Every submitter gets `reward / submissionCount`, 
+     with exact remainder preservation.
+
+3. Pure Plain Text Onchain:
+   - Tasks, specifications, links, and answers are permanently immutable in 
+     smart contract storage. No hosting fees, no downtime.
+
+4. 100% Capital Efficiency:
+   - 0% protocol rake.
+   - 0% withdrawal fee.
+   - Immediate liquidity to winner's pending balance.
+
+================================================================================
+SLIDE 5: PROTOCOL MECHANISM & LIFECYCLE
+================================================================================
+
+A bounty progresses through a transparent state machine:
+
+Phase 1: Task Creation (Status: Open)
+- Poster calls `createBounty(title, desc, submissionDays, reviewDays)` payable.
+- BOT reward is locked in contract. Deadlines calculated:
+  `submissionDeadline = now + submissionDays`
+  `reviewDeadline = submissionDeadline + reviewDays`
+
+Phase 2: Solution Submission (Status: Open)
+- Workers submit text solutions via `submit(bountyId, content)`.
+- Enforces: `msg.sender != poster`, 1 submission per wallet, max 50 submissions.
+- Poster can no longer cancel.
+
+Phase 3: Poster Evaluation (Status: Open)
+- Poster can pick a winner at any time before `reviewDeadline`.
+- Calling `selectWinner(bountyId, index)` transitions state to `Awarded`.
+- Full reward is credited to winner's `pendingBalance`.
+
+Phase 4: Alternative Resolutions (Terminal)
+- Path A (Winner Picked): State becomes `Awarded`. Winner withdraws reward.
+- Path B (No Submissions): Poster calls `cancelBounty()`, state becomes `Cancelled`, 
+  refunds poster deposit.
+- Path C (Poster Silent): If `now > reviewDeadline` and `submissionCount > 0`, 
+  anyone calls `splitIfAbandoned()`, state becomes `Split`, dividing reward equally.
+
+Phase 5: Secure Withdrawal
+- Any user with a pending balance calls `withdraw()`.
+- State zeroes balance first (CEI), transfers native BOT, emits `Withdrawn`.
+
+================================================================================
+SLIDE 6: SECURITY ARCHITECTURE & GAME THEORY
+================================================================================
+
+Bountiful is engineered with defensive programming principles:
+
+1. Checks-Effects-Interactions (CEI):
+   - Balances are zeroed and status transitions occur prior to external calls.
+   - OpenZeppelin's `ReentrancyGuard` protects all balance-modifying functions.
+
+2. Malicious Receiver Fault Isolation:
+   - Payouts are pull-based. A worker contract with a reverting `receive()` 
+     function cannot block `selectWinner`, `cancelBounty`, or `splitIfAbandoned`.
+   - Other users and bounties proceed completely unaffected.
+
+3. Mathematical Conservation of Funds:
+   - Invariant: `address(bountiful).balance == sum(Open bounties reward) + sum(pendingBalance)`.
+   - In `splitIfAbandoned`, integer division remainders (`reward % count`) are 
+     allocated to the first worker. Zero wei is ever created or destroyed.
+
+4. Bounded Gas & Storage:
+   - `MAX_SUBMISSIONS = 50` caps worst-case gas cost of `splitIfAbandoned` 
+     safely within block limits (~85k to ~450k gas).
+   - String inputs bounded: Title (1–100 B), Desc (1–1000 B), Content (1–1000 B).
+
+================================================================================
+SLIDE 7: TECHNICAL STACK & ARCHITECTURE
+================================================================================
+
+Smart Contracts:
+- Language: Solidity ^0.8.24
+- Security Framework: OpenZeppelin Contracts v5.0.2 (`ReentrancyGuard`)
+- Toolchain: Foundry (forge, cast)
+- Remappings: Cleanly vendorized without runtime submodule vulnerabilities
+
+Frontend Architecture:
+- Framework: React 18 + Vite + TypeScript (SPA)
+- Web3 Interaction: viem 2.21 (type-safe ABI bindings, client/wallet clients)
+- Routing: Hash-based deep linking (`#/bounty/:id`) for easy task sharing
+- Styling: Custom energetic bounty board design (coral/orange accents, 
+  card-based board, responsive layout, plain-text security rendering)
+- State Management: Optimistic UI with reactive background polling every 4 seconds
+
+================================================================================
+SLIDE 8: BOT ECOSYSTEM ALIGNMENT
+================================================================================
+
+Why Bountiful is Tailor-Made for the BOT Blockchain:
+
+1. Native BOT Utility:
+   - Bounties use native BOT directly, driving transaction velocity, onchain volume, 
+     and organic utility across the ecosystem.
+
+2. Micro-Bounties Made Practical:
+   - Low transaction fees on BOT Testnet and BOT Mainnet make 0.1 BOT or 1 BOT 
+     micro-tasks economically viable, unlike Ethereum L1 where gas exceeds rewards.
+
+3. Community Coordination Engine:
+   - Perfect coordination hub for hackathons, community bug bounties, logo designs, 
+     documentation writing, and smart contract reviews within the BOT community.
+
+================================================================================
+SLIDE 9: VERIFICATION & AUDIT READINESS
+================================================================================
+
+Testing Summary:
+- 42 Tests Passed (0 Failures)
+- Unit Tests: All positive paths, error bounds, and boundary validations verified.
+- Reentrancy Tests: Malicious recursive attack contracts verified blocked.
+- Fuzz Testing: 256 randomized runs testing random rewards, submitter counts, 
+  and execution orders.
+- Invariant Testing: 32 runs x 32 depth (and 256 runs x 500 depth) proving 
+  solvency invariant across random actor interactions.
+
+Live Deployment:
+- Network: BOT Testnet (Chain ID: 968)
+- Deployed Address: 0x9D67fFa376b94b44804b75d0006D37e6C8a5Cab2
+- Source Verified: BohrScan Blockscout API (Response: OK)
+
+================================================================================
+SLIDE 10: ROADMAP & FUTURE VISION
+================================================================================
+
+Phase 1: Testnet Launch (Completed)
+- Deploy Bountiful contract on BOT Testnet (Chain ID 968).
+- Verify contract on BohrScan.
+- Launch responsive frontend with wallet integration, search, and deep linking.
+
+Phase 2: BOT Mainnet Deployment (Next)
+- Deploy Bountiful to BOT Mainnet (Chain ID 677).
+- Partner with BOT ecosystem protocols for community task boards.
+
+Phase 3: Decentralized Reputation & Multi-Task Bundles
+- Optional onchain attestations for verified workers.
+- Multi-milestone task bounties and team submissions.
+- Native SDK for DAOs to programmatically fund bounties via governance votes.
+
+================================================================================
+                                  THANK YOU
+           Post a task. Pay the best answer. Built on BOT Chain.
+                 https://scan.bohr.life/address/0x9D67fFa376b94b44804b75d0006D37e6C8a5Cab2
+================================================================================

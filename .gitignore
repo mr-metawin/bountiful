@@ -1,0 +1,21 @@
+# Foundry build artifacts
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+
+# Frontend dependencies and build
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Environment and sensitive keys
+.env
+.env.*
+*.password
+*.key
+*password*
+*.keystore
+
+# System and logs
+.DS_Store
+*.log
