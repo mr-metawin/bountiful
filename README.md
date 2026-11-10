@@ -15,13 +15,14 @@ Fairness and balance protection are mathematically guaranteed onchain:
 
 ## Network & Deployed Contract
 
-- **Network:** BOT Testnet
-- **Chain ID:** `968`
+- **Network:** BOT Mainnet
+- **Chain ID:** `677`
 - **Native Currency:** `BOT` (18 decimals)
-- **RPC Endpoint:** `https://rpc.bohr.life`
-- **Explorer:** [https://scan.bohr.life/](https://scan.bohr.life/)
-- **Deployed Contract Address:** [`0x9D67fFa376b94b44804b75d0006D37e6C8a5Cab2`](https://scan.bohr.life/address/0x9D67fFa376b94b44804b75d0006D37e6C8a5Cab2)
-- **Explorer Contract Verification:** [Verified on BohrScan](https://scan.bohr.life/address/0x9d67ffa376b94b44804b75d0006d37e6c8a5cab2)
+- **Total Supply:** 150 Million
+- **RPC Endpoint:** `https://rpc.botchain.ai`
+- **Explorer:** [https://scan.botchain.ai/](https://scan.botchain.ai/)
+- **Deployed Contract Address:** [`0x9D67fFa376b94b44804b75d0006D37e6C8a5Cab2`](https://scan.botchain.ai/address/0x9D67fFa376b94b44804b75d0006D37e6C8a5Cab2)
+- **Explorer Contract Verification:** [Verified on BOTScan](https://scan.botchain.ai/address/0x9d67ffa376b94b44804b75d0006d37e6c8a5cab2)
 
 ---
 
@@ -84,7 +85,7 @@ Deploy using a cast keystore wallet:
 ```bash
 cd contracts
 forge script script/Deploy.s.sol \
-  --rpc-url https://rpc.bohr.life \
+  --rpc-url https://rpc.botchain.ai \
   --account bountiful \
   --password-file <path-to-password-file> \
   --broadcast
@@ -96,7 +97,7 @@ Start the Vite development server:
 cd frontend
 npm run dev
 ```
-Open [http://localhost:5174/](http://localhost:5174/) (or the port reported by Vite) in your browser. Connect MetaMask or any injected Web3 wallet and switch to BOT Testnet (Chain ID 968).
+Open [http://localhost:5174/](http://localhost:5174/) (or the port reported by Vite) in your browser. Connect MetaMask or any injected Web3 wallet and switch to BOT Mainnet (Chain ID 677).
 
 ---
 
@@ -109,4 +110,4 @@ Open [http://localhost:5174/](http://localhost:5174/) (or the port reported by V
   3. `splitIfAbandoned`: If the poster disappears, the contract splits the reward among submitters. Funds are never permanently stuck.
 - **Pull-Based Withdrawals:** Balance updates use pull-over-push semantics via `pendingBalance` and `withdraw()`. A worker or poster contract that rejects BOT transfers cannot DOS or block payouts for any other participant.
 - **Reentrancy Protection:** All balance-modifying routines use OpenZeppelin's `nonReentrant` and adhere to Checks-Effects-Interactions (CEI).
-- **Testnet Demo Notice:** This application is deployed on the BOT Testnet (Chain ID 968) for demonstration and evaluation purposes. It has not undergone an independent third-party security audit.
+- **Mainnet Launch:** This application is deployed on the BOT Mainnet (Chain ID 677).

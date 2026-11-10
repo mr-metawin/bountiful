@@ -7,9 +7,9 @@ const addressData = JSON.parse(fs.readFileSync('./frontend/src/contracts/address
 const bountifulAddress = addressData.address;
 const bountifulAbi = JSON.parse(fs.readFileSync('./frontend/src/contracts/Bountiful.json', 'utf8'));
 
-const botTestnet = defineChain({
-  id: 968,
-  name: 'BOT Testnet',
+const botMainnet = defineChain({
+  id: 677,
+  name: 'BOT Mainnet',
   nativeCurrency: {
     decimals: 18,
     name: 'BOT',
@@ -17,13 +17,13 @@ const botTestnet = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ['https://rpc.bohr.life'],
+      http: ['https://rpc.botchain.ai'],
     },
   },
   blockExplorers: {
     default: {
-      name: 'BohrScan',
-      url: 'https://scan.bohr.life',
+      name: 'BOTScan',
+      url: 'https://scan.botchain.ai',
     },
   },
 });
@@ -39,20 +39,24 @@ for (const line of envContent.split('\n')) {
   }
 }
 
-const w1Account = privateKeyToAccount(env.WALLET_1_PRIVATE_KEY);
-const w2Account = privateKeyToAccount(env.WALLET_2_PRIVATE_KEY);
-const w3Account = privateKeyToAccount(env.WALLET_3_PRIVATE_KEY);
+const pk1 = env.WALLET_ADDRESS_1_PK || env.WALLET_1_PRIVATE_KEY;
+const pk2 = env.WALLET_ADDRESS_2_PK || env.WALLET_2_PRIVATE_KEY;
+const pk3 = env.WALLET_ADDRESS_3_PK || env.WALLET_3_PRIVATE_KEY;
+
+const w1Account = privateKeyToAccount(pk1);
+const w2Account = privateKeyToAccount(pk2);
+const w3Account = privateKeyToAccount(pk3);
 
 const publicClient = createPublicClient({
-  chain: botTestnet,
-  transport: http('https://rpc.bohr.life'),
+  chain: botMainnet,
+  transport: http('https://rpc.botchain.ai'),
 });
 
 function getWalletClient(account) {
   return createWalletClient({
     account,
-    chain: botTestnet,
-    transport: http('https://rpc.bohr.life'),
+    chain: botMainnet,
+    transport: http('https://rpc.botchain.ai'),
   });
 }
 
@@ -60,7 +64,7 @@ const w1Client = getWalletClient(w1Account);
 const w2Client = getWalletClient(w2Account);
 const w3Client = getWalletClient(w3Account);
 
-console.log('=== Executing 24 Transactions on BOT Testnet for Bountiful ===');
+console.log('=== Executing 24 Transactions on BOT Mainnet for Bountiful ===');
 console.log(`Bountiful Address: ${bountifulAddress}`);
 console.log(`Wallet 1: ${w1Account.address}`);
 console.log(`Wallet 2: ${w2Account.address}`);
@@ -68,8 +72,8 @@ console.log(`Wallet 3: ${w3Account.address}\n`);
 
 const summary = {
   contract: bountifulAddress,
-  chainId: 968,
-  network: 'BOT Testnet',
+  chainId: 677,
+  network: 'BOT Mainnet',
   wallets: {
     wallet1: { address: w1Account.address, txs: [] },
     wallet2: { address: w2Account.address, txs: [] },
@@ -98,7 +102,7 @@ async function runTx(walletNum, client, account, description, writeCall) {
         hash,
         blockNumber: Number(receipt.blockNumber),
         gasUsed: Number(receipt.gasUsed),
-        explorerUrl: `https://scan.bohr.life/tx/${hash}`,
+        explorerUrl: `https://scan.botchain.ai/tx/${hash}`,
       };
 
       summary.wallets[`wallet${walletNum}`].txs.push(txRecord);
@@ -116,12 +120,12 @@ async function runTx(walletNum, client, account, description, writeCall) {
 async function main() {
   // --- Cycle 1: Bounty #1 ---
   console.log('\n--- Bounty 1 Cycle ---');
-  await runTx(1, w1Client, w1Account, '1. createBounty: Write BOT Testnet Validator Guide (0.005 BOT)', async () => {
+  await runTx(1, w1Client, w1Account, '1. createBounty: Write BOT Mainnet Validator Guide (0.005 BOT)', async () => {
     return w1Client.writeContract({
       address: bountifulAddress,
       abi: bountifulAbi,
       functionName: 'createBounty',
-      args: ['Write BOT Testnet Validator Guide', 'Step-by-step tutorial for spinning up a node on BOT Testnet', 7, 3],
+      args: ['Write BOT Mainnet Validator Guide', 'Step-by-step tutorial for spinning up a node on BOT Mainnet', 7, 3],
       value: parseEther('0.005'),
     });
   });
@@ -286,12 +290,12 @@ async function main() {
 
   // --- Cycle 5: Bounty #5 ---
   console.log('\n--- Bounty 5 Cycle ---');
-  await runTx(2, w2Client, w2Account, '6. createBounty: Telegram Alert Bot for BohrScan Blocks (0.005 BOT)', async () => {
+  await runTx(2, w2Client, w2Account, '6. createBounty: Telegram Alert Bot for BOTScan Blocks (0.005 BOT)', async () => {
     return w2Client.writeContract({
       address: bountifulAddress,
       abi: bountifulAbi,
       functionName: 'createBounty',
-      args: ['Telegram Alert Bot for BohrScan Blocks', 'Lightweight python bot sending block and gas notifications', 4, 3],
+      args: ['Telegram Alert Bot for BOTScan Blocks', 'Lightweight python bot sending block and gas notifications', 4, 3],
       value: parseEther('0.005'),
     });
   });
@@ -301,7 +305,7 @@ async function main() {
       address: bountifulAddress,
       abi: bountifulAbi,
       functionName: 'submit',
-      args: [5n, 'Bot created and live: @BohrScanAlertsBot on Telegram running on serverless lambda'],
+      args: [5n, 'Bot created and live: @BOTScanAlertsBot on Telegram running on serverless lambda'],
     });
   });
 

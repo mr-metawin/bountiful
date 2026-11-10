@@ -5,7 +5,8 @@ import {
   custom,
   http,
 } from 'viem';
-import { contractAddress, bountifulAbi, botTestnet } from './contracts';
+import { contractAddress, bountifulAbi, botMainnet } from './contracts';
+import botLogo from './assets/bot-logo.svg';
 import {
   Bounty,
   Submission,
@@ -25,8 +26,8 @@ import { HowItWorks } from './components/HowItWorks';
 import './App.css';
 
 const publicClient = createPublicClient({
-  chain: botTestnet,
-  transport: http('https://rpc.bohr.life'),
+  chain: botMainnet,
+  transport: http('https://rpc.botchain.ai'),
 });
 
 const DEFAULT_CONSTANTS: ContractConstants = {
@@ -125,16 +126,16 @@ export const App: React.FC = () => {
     loadConstants();
   }, []);
 
-  // Switch to BOT Testnet
-  const switchToBotTestnet = async () => {
+  // Switch to BOT Mainnet
+  const switchToBotMainnet = async () => {
     if (!window.ethereum) return;
 
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x3c8' }], // 968 in hex
+        params: [{ chainId: '0x2a5' }], // 677 in hex
       });
-      setChainId(968);
+      setChainId(677);
     } catch (switchError: any) {
       if (switchError.code === 4902 || switchError?.data?.originalError?.code === 4902) {
         try {
@@ -142,21 +143,21 @@ export const App: React.FC = () => {
             method: 'wallet_addEthereumChain',
             params: [
               {
-                chainId: '0x3c8',
-                chainName: 'BOT Testnet',
+                chainId: '0x2a5',
+                chainName: 'BOT Mainnet',
                 nativeCurrency: {
                   name: 'BOT',
                   symbol: 'BOT',
                   decimals: 18,
                 },
-                rpcUrls: ['https://rpc.bohr.life'],
-                blockExplorerUrls: ['https://scan.bohr.life'],
+                rpcUrls: ['https://rpc.botchain.ai'],
+                blockExplorerUrls: ['https://scan.botchain.ai'],
               },
             ],
           });
-          setChainId(968);
+          setChainId(677);
         } catch (addError) {
-          console.error('Failed to add BOT Testnet:', addError);
+          console.error('Failed to add BOT Mainnet:', addError);
         }
       } else {
         console.error('Failed to switch network:', switchError);
@@ -185,13 +186,13 @@ export const App: React.FC = () => {
     const currentChain = parseInt(currentChainHex, 16);
     setChainId(currentChain);
 
-    if (currentChain !== botTestnet.id) {
-      await switchToBotTestnet();
+    if (currentChain !== botMainnet.id) {
+      await switchToBotMainnet();
     }
 
     const client = createWalletClient({
       account: activeAccount,
-      chain: botTestnet,
+      chain: botMainnet,
       transport: custom(window.ethereum),
     });
 
@@ -718,9 +719,9 @@ export const App: React.FC = () => {
       <Header
         account={account}
         chainId={chainId}
-        targetChainId={botTestnet.id}
+        targetChainId={botMainnet.id}
         onConnect={connectWallet}
-        onSwitchChain={switchToBotTestnet}
+        onSwitchChain={switchToBotMainnet}
         onOpenPostModal={() => setIsPostModalOpen(true)}
         onLogoClick={handleBackToBoard}
       />
@@ -918,26 +919,103 @@ export const App: React.FC = () => {
       {/* App Footer */}
       <footer className="app-footer">
         <div className="footer-inner">
-          <div className="footer-proof-box">
-            <span className="proof-status-indicator">🟢 Verified Contract on BOT Testnet</span>
-            <div className="proof-details">
-              <span><strong>Chain ID:</strong> 968</span>
-              <span className="proof-sep">•</span>
-              <span>
-                <strong>Contract:</strong>{' '}
-                <a
-                  href={`https://scan.bohr.life/address/${contractAddress}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="footer-contract-link font-mono"
-                >
-                  {contractAddress}
-                </a>
-              </span>
+          {/* Section 1: Proof on bot mainnet */}
+          <div className="footer-section-proof">
+            <div className="footer-proof-box">
+              <span className="proof-status-indicator">🟢 Proof on bot mainnet</span>
+              <div className="proof-details">
+                <span><strong>Chain ID:</strong> 677</span>
+                <span className="proof-sep">•</span>
+                <span>
+                  <strong>Contract:</strong>{' '}
+                  <a
+                    href={`https://scan.botchain.ai/address/${contractAddress}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="footer-contract-link font-mono"
+                  >
+                    {contractAddress}
+                  </a>
+                </span>
+              </div>
+            </div>
+
+            <div className="footer-links-row">
+              <a
+                href="https://www.botchain.ai/en/"
+                target="_blank"
+                rel="noreferrer"
+                className="footer-external-link"
+              >
+                BOT Chain Website
+              </a>
+              <span className="footer-links-sep">•</span>
+              <a
+                href="https://scan.botchain.ai/"
+                target="_blank"
+                rel="noreferrer"
+                className="footer-external-link"
+              >
+                BOTScan explorer
+              </a>
             </div>
           </div>
-          <div className="footer-copyright">
-            © 2026 <strong>Bountiful</strong> · "Post a task. Pay the best answer." · BOT Testnet
+
+          {/* Section 2: Part of the Ecosystem */}
+          <div className="ecosystem-section">
+            <div className="ecosystem-header-label">PART OF THE ECOSYSTEM</div>
+
+            <div className="ecosystem-logo-circle">
+              <img src={botLogo} alt="BOT Chain Logo" className="ecosystem-logo" />
+            </div>
+
+            <h3 className="ecosystem-title">
+              <span className="ecosystem-title-bot">BOT</span>
+              <span className="ecosystem-title-chain"> Chain</span>
+            </h3>
+
+            <p className="ecosystem-tagline">
+              Post a task. Pay the best answer.
+            </p>
+
+            <div className="ecosystem-divider">
+              <span className="ecosystem-divider-line" />
+              <span className="ecosystem-divider-diamond">◆</span>
+              <span className="ecosystem-divider-line" />
+            </div>
+
+            <div className="ecosystem-links">
+              <a
+                href="https://www.botchain.ai/en/"
+                target="_blank"
+                rel="noreferrer"
+                className="ecosystem-link"
+              >
+                <svg className="ecosystem-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="2" y1="12" x2="22" y2="12" />
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+                <span>botchain.ai</span>
+              </a>
+
+              <a
+                href="https://scan.botchain.ai/"
+                target="_blank"
+                rel="noreferrer"
+                className="ecosystem-link"
+              >
+                <svg className="ecosystem-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <span>Explorer</span>
+              </a>
+            </div>
+
+            <div className="ecosystem-copyright">
+              © 2026 <strong>BOT Chain</strong> · Mainnet · Chain ID <strong>677</strong>
+            </div>
           </div>
         </div>
       </footer>

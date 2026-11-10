@@ -49,12 +49,12 @@ export const Header: React.FC<HeaderProps> = ({
               className="btn btn-warning btn-switch-net"
               onClick={onSwitchChain}
             >
-              ⚠️ Switch to BOT Testnet
+              ⚠️ Switch to BOT Mainnet
             </button>
           ) : account ? (
             <div className="wallet-connected-pill">
-              <span className="network-dot" title="Connected to BOT Testnet" />
-              <span className="chain-label">BOT Testnet</span>
+              <span className="network-dot" title="Connected to BOT Mainnet" />
+              <span className="chain-label">BOT Mainnet</span>
               <span className="wallet-addr font-mono">{shortenAddress(account)}</span>
             </div>
           ) : (

@@ -1526,8 +1526,8 @@ a:hover {
 .app-footer {
   border-top: 1px solid var(--border-color);
   background-color: var(--bg-primary);
-  padding: 28px 24px;
-  margin-top: 40px;
+  padding: 36px 24px 30px;
+  margin-top: 50px;
 }
 
 .footer-inner {
@@ -1536,8 +1536,17 @@ a:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 20px;
   text-align: center;
+}
+
+/* Section 1: Proof on bot mainnet */
+.footer-section-proof {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
 }
 
 .footer-proof-box {
@@ -1547,14 +1556,15 @@ a:hover {
   gap: 6px;
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
-  padding: 10px 20px;
+  padding: 10px 24px;
   border-radius: var(--radius-full);
-  font-size: 0.825rem;
+  font-size: 0.85rem;
 }
 
 .proof-status-indicator {
   color: #10b981;
   font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .proof-details {
@@ -1569,12 +1579,212 @@ a:hover {
 }
 
 .footer-contract-link {
-  color: #ff8c42;
+  color: var(--accent-orange);
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
-.footer-copyright {
-  font-size: 0.8rem;
+.footer-contract-link:hover {
+  color: var(--accent-gold);
+  text-decoration: underline;
+}
+
+.footer-links-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.875rem;
+}
+
+.footer-external-link {
+  color: var(--accent-coral);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.footer-external-link:hover {
+  color: var(--accent-gold);
+  text-decoration: underline;
+  transform: translateY(-1px);
+}
+
+.footer-links-sep {
   color: var(--text-muted);
+}
+
+/* Section 2: Part of the Ecosystem */
+.ecosystem-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 1.75rem 0 0.5rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.ecosystem-header-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent-coral);
+  margin-bottom: 1.5rem;
+  opacity: 0.95;
+}
+
+.ecosystem-logo-circle {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(16, 163, 127, 0.16) 0%, rgba(22, 27, 34, 0.95) 75%);
+  border: 1.5px solid rgba(16, 163, 127, 0.45);
+  box-shadow: 
+    0 0 0 6px rgba(16, 163, 127, 0.08),
+    0 0 26px rgba(16, 163, 127, 0.3),
+    inset 0 0 16px rgba(16, 163, 127, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.15rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: default;
+}
+
+.ecosystem-logo-circle:hover {
+  transform: scale(1.06);
+  border-color: rgba(16, 163, 127, 0.8);
+  box-shadow: 
+    0 0 0 8px rgba(16, 163, 127, 0.14),
+    0 0 35px rgba(16, 163, 127, 0.5),
+    inset 0 0 20px rgba(16, 163, 127, 0.3);
+}
+
+.ecosystem-logo {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 2px 6px rgba(16, 163, 127, 0.35));
+  transition: transform 0.3s ease;
+}
+
+.ecosystem-logo-circle:hover .ecosystem-logo {
+  transform: scale(1.08);
+}
+
+.ecosystem-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.45rem;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.ecosystem-title-bot {
+  background: linear-gradient(135deg, #ff7043 0%, #ff5722 50%, #f97316 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ecosystem-title-chain {
+  color: var(--text-primary);
+}
+
+.ecosystem-tagline {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.4rem;
+  font-weight: 400;
+  max-width: 480px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.ecosystem-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 280px;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.ecosystem-divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--border-color) 60%, rgba(255, 87, 34, 0.5) 100%);
+}
+
+.ecosystem-divider-line:last-child {
+  background: linear-gradient(90deg, rgba(255, 87, 34, 0.5) 0%, var(--border-color) 40%, transparent 100%);
+}
+
+.ecosystem-divider-diamond {
+  color: var(--accent-coral);
+  font-size: 0.72rem;
+  line-height: 1;
+  text-shadow: 0 0 8px rgba(255, 87, 34, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ecosystem-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.25rem;
+  margin-bottom: 1.6rem;
+  flex-wrap: wrap;
+}
+
+.ecosystem-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--text-secondary) !important;
+  text-decoration: none !important;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.2s ease, transform 0.2s ease;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius-sm);
+}
+
+.ecosystem-link:hover {
+  color: var(--text-primary) !important;
+  transform: translateY(-1px);
+}
+
+.ecosystem-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--text-secondary);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.ecosystem-link:hover .ecosystem-icon {
+  color: var(--accent-coral);
+  transform: scale(1.1);
+}
+
+.ecosystem-copyright {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.ecosystem-copyright strong {
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 
 /* ==========================================================================
